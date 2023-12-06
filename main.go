@@ -62,7 +62,7 @@ func main() {
 		fmt.Println(equals)
 		if len(changes) > 0 {
 			for _, change := range changes {
-				logger.INFO.Println("INFO: ", strconv.Itoa(change.ID)+" - "+change.ErrorMessage)
+				logger.CLogger.Info("INFO: ", strconv.Itoa(change.ID)+" - "+change.ErrorMessage)
 			}
 
 			// Filter the changes
@@ -70,13 +70,13 @@ func main() {
 
 			if len(filteredChanges) > 0 {
 				for _, v := range filteredChanges {
-					logger.INFO.Println("TRACE: ", strconv.Itoa(v.ID)+" - "+v.ErrorMessage)
+					logger.CLogger.Info("TRACE: ", strconv.Itoa(v.ID)+" - "+v.ErrorMessage)
 				}
 				f := helpers.SetChangesToExcel(filteredChanges)
 				sendMailWithAttachment(filteredChanges, f)
 			}
 		} else {
-			logger.INFO.Println("INFO: No changes in the last minute.")
+			logger.CLogger.Info("INFO: No changes in the last minute.")
 		}
 		fmt.Println(equals)
 	})
@@ -88,10 +88,9 @@ func main() {
 
 // Initialize Application
 func init() {
-	logger.InitLogger(os.Stdout, os.Stdout, os.Stdout, os.Stdout, os.Stderr, os.Stderr)
 	isConfigSuccess = configureApplication()
 	if !isConfigSuccess {
-		logger.ERROR.Println("INIT: Application configuration failed. Please check your config file.")
+		logger.CLogger.Error("INIT: Application configuration failed. Please check your config file.")
 		os.Exit(1)
 	}
 }
@@ -102,11 +101,11 @@ func configureApplication() bool {
 	fmt.Println(equals)
 	dir, err := os.Getwd()
 	if err != nil {
-		logger.ERROR.Println("INIT: Cannot get current working directory os.Getwd()")
+		logger.CLogger.Info("INIT: Cannot get current working directory os.Getwd()")
 		return false
 	} else {
 		config.ReadConfig(dir)
-		logger.INFO.Println("INIT: Application configuration file read success.")
+		logger.CLogger.Info("INIT: Application configuration file read success.")
 		return true
 	}
 }
@@ -118,7 +117,7 @@ func dbConnection() *gorm.DB {
 	// String to Int
 	port, err := strconv.Atoi(env.Port)
 	if err != nil {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		os.Exit(1)
 	}
 
@@ -126,12 +125,12 @@ func dbConnection() *gorm.DB {
 	dbInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", env.Host, port, env.Username, env.Password, env.DBName, env.SSLMode)
 	db, err := gorm.Open(postgres.Open(dbInfo), &gorm.Config{})
 	if err != nil {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		os.Exit(1)
 	}
 
 	// Connection Success
-	logger.SUCCESS.Println("PostgreSQL Database Connection Success")
+	logger.CLogger.Success("PostgreSQL Database Connection Success")
 	return db
 }
 
@@ -143,7 +142,7 @@ func redisConnection(redisUrl string) (*redis.Client, context.Context) {
 	// convert db to int
 	dbInt, err := strconv.Atoi(db)
 	if err != nil {
-		logger.ERROR.Println("INIT: redis connection database is not integer ", err)
+		logger.CLogger.Success("INIT: redis connection database is not integer ", err)
 	}
 
 	rContext := context.Background()
@@ -156,7 +155,7 @@ func redisConnection(redisUrl string) (*redis.Client, context.Context) {
 	// ping redis for check connection
 	_, err = rdb.Ping(rContext).Result()
 	if err != nil {
-		logger.ERROR.Println("INIT: redis ping request failed ", err)
+		logger.CLogger.Error("INIT: redis ping request failed ", err)
 	}
 
 	return rdb, rContext
@@ -168,7 +167,7 @@ func getTableChanges(db *gorm.DB) ([]models.Log, error) {
 
 	// Last Minute Changes
 	if err := db.Where("date_time >= ?", helpers.TimeFormatter(time.Now().Add(-repeatTime))).Where("error_message IS NOT NULL").Find(&logs).Error; !errors.Is(err, nil) {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		return nil, err
 	}
 

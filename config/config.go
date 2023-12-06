@@ -57,11 +57,11 @@ func ReadConfig(processCwdir string) {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		logger.ERROR.Println("INIT: Cannot read config file.")
+		logger.CLogger.Error("INIT: Cannot read config file.")
 	}
 
 	if err := viper.Unmarshal(&Config); err != nil {
-		logger.ERROR.Println("INIT: Cannot unmarshal config file.")
+		logger.CLogger.Error("INIT: Cannot unmarshal config file.")
 		os.Exit(1)
 	}
 

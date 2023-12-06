@@ -27,7 +27,7 @@ func LogTemplate(content *models.Mail, logs []models.Log, l string) string {
 
 	t, err := template.ParseFiles("./templates/log.html")
 	if err != nil {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		return ""
 	}
 
@@ -58,7 +58,7 @@ func LogTemplate(content *models.Mail, logs []models.Log, l string) string {
 		Logs:        logs,
 	})
 	if r != nil {
-		logger.ERROR.Println("ERROR: ", r)
+		logger.CLogger.Error("ERROR: ", r)
 		return ""
 	}
 

@@ -37,12 +37,12 @@ func SendMail(content *models.Mail, logs []models.Log, attachment *excelize.File
 
 	e := SendMailWithGomail(mailConfig, content, logs, attachment)
 	if e != nil {
-		logger.ERROR.Println("ERROR: ", e)
+		logger.CLogger.Error("ERROR: ", e)
 		return e
 	}
 
 	// If everything goes well, return nil
-	logger.SUCCESS.Println("Email sent successfully")
+	logger.CLogger.Success("Email sent successfully")
 	return nil
 }
 
@@ -66,7 +66,7 @@ func SendMailWithSmtp(mailConfig *models.MailConfig, content *models.Mail, logs 
 	// and send the email all in one step.
 	err := smtp.SendMail(mailConfig.Host+":"+mailConfig.Port, auth, from.Address, []string(content.To), []byte(body))
 	if err != nil {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		return err
 	}
 

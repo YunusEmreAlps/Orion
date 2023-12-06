@@ -25,6 +25,7 @@ require (
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/roylee0704/gron v0.0.0-20160621042432-e78485adab46 // indirect
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

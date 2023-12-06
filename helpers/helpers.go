@@ -63,7 +63,7 @@ func SetChangesToExcel(changes []models.Log) *excelize.File {
 	f := excelize.NewFile()
 	defer func() {
 		if err := f.Close(); err != nil {
-			logger.ERROR.Println("ERROR: ", err)
+			logger.CLogger.Error("ERROR: ", err)
 		}
 	}()
 
@@ -108,7 +108,7 @@ func SetChangesToExcel(changes []models.Log) *excelize.File {
 
 	// Save spreadsheet to the db
 	if err := f.SaveAs("Logs.xlsx"); err != nil {
-		logger.ERROR.Println("ERROR: ", err)
+		logger.CLogger.Error("ERROR: ", err)
 		return nil
 	}
 
